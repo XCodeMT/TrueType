@@ -25,7 +25,9 @@
             <!--<runtime dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_11.jdk/Contents/Home" />-->
             <classpath file="dist/TrueType.jar" />
             <classpath file="dist/lib/commons-io-2.4.jar" />
-            <classpath file="dist/lib/Jhrome.jar" />
+            <classpath file="dist/lib/JChrome.jar" />
+            <classpath file="dist/lib/Utilities.jar" />
+            <classpath file="dist/lib/swing-layout-1.0.4.jar" />
         </bundleapp>
     </target>
 
