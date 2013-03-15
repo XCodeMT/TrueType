@@ -21,7 +21,7 @@
             displayname="TrueType"
             identifier="com.abnyk.TrueType"
             icon="yinyang.icns" 
-            mainclassname="truetype.TrueType">
+            mainclassname="truetype.typeX.TrueType">
             <!--<runtime dir="/Library/Java/JavaVirtualMachines/jdk1.7.0_11.jdk/Contents/Home" />-->
             <classpath file="dist/TrueType.jar" />
             <classpath file="dist/lib/commons-io-2.4.jar" />

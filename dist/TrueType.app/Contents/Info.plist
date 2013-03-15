@@ -27,7 +27,7 @@
 <key>NSHumanReadableCopyright</key>
 <string></string>
 <key>JVMMainClassName</key>
-<string>truetype.TrueType</string>
+<string>truetype.typeX.TrueType</string>
 <key>JVMOptions</key>
 <array>
 </array>
