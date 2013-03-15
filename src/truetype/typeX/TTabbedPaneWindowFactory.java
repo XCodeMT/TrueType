@@ -44,7 +44,7 @@ import javax.swing.SwingUtilities;
  * @author XCodeMT
  */
 public class TTabbedPaneWindowFactory implements ITabbedPaneWindowFactory {
-    private int windowCount = 0;
+    private MyWindowCloseListener closeListener = new MyWindowCloseListener();
 
     @Override
     public ITabbedPaneWindow createWindow() {
@@ -52,14 +52,14 @@ public class TTabbedPaneWindowFactory implements ITabbedPaneWindowFactory {
         tabbedPaneWindow.getTabbedPane().setTabFactory(new XTabFactory());
         tabbedPaneWindow.getTabbedPane().setWindowFactory(this);
         tabbedPaneWindow.getTabbedPane().setNewTabActionListener(new NewTabListener(tabbedPaneWindow.getTabbedPane()));
-        ((JFrame)tabbedPaneWindow).setJMenuBar(createMenuBar(tabbedPaneWindow.getTabbedPane()));
+        ((JFrame)tabbedPaneWindow).setJMenuBar(createMenuBar(tabbedPaneWindow.getTabbedPane(), this));
         WindowUtils.enableOSXFullscreen(tabbedPaneWindow.getWindow());
-        tabbedPaneWindow.getWindow().addWindowListener(new MyWindowCloseListener());
-        windowCount++;
+        tabbedPaneWindow.getWindow().addWindowListener(closeListener);
+        closeListener.add();
         return tabbedPaneWindow;
     }
     
-    private JMenuBar createMenuBar(final TabbedPane pane) {
+    private JMenuBar createMenuBar(final TabbedPane pane, final TTabbedPaneWindowFactory windowFactory) {
         JMenuBar bar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem open = new JMenuItem("Open");
@@ -113,7 +113,13 @@ public class TTabbedPaneWindowFactory implements ITabbedPaneWindowFactory {
         newWindow.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                SwingUtilities.invokeLater(new TrueType());
+            ITabbedPaneWindow window = windowFactory.createWindow();
+            ITab tab = window.getTabbedPane().getTabFactory().createTab("New...");
+            new FileView(tab);
+            window.getTabbedPane().addTab(tab);
+            window.getTabbedPane().setSelectedTab(tab);
+            window.getWindow().setSize(500, 500);
+            window.getWindow().setVisible(true);
             }
         });
         
@@ -146,6 +152,7 @@ public class TTabbedPaneWindowFactory implements ITabbedPaneWindowFactory {
     }
     
     class MyWindowCloseListener implements WindowListener {
+        private int windowCount;
 
         @Override
         public void windowOpened(WindowEvent e) {
@@ -153,14 +160,14 @@ public class TTabbedPaneWindowFactory implements ITabbedPaneWindowFactory {
 
         @Override
         public void windowClosing(WindowEvent e) {
+            windowCount--;
+            if (windowCount == 0) {
+                System.exit(0);
+            }
         }
 
         @Override
         public void windowClosed(WindowEvent e) {
-            windowCount--;
-            if (windowCount < 1) {
-                System.exit(0);
-            }
         }
 
         @Override
@@ -177,6 +184,10 @@ public class TTabbedPaneWindowFactory implements ITabbedPaneWindowFactory {
 
         @Override
         public void windowDeactivated(WindowEvent e) {
+        }
+
+        private void add() {
+            windowCount++;
         }
         
     }
