@@ -28,7 +28,20 @@
             <classpath file="dist/lib/JChrome.jar" />
             <classpath file="dist/lib/Utilities.jar" />
             <classpath file="dist/lib/swing-layout-1.0.4.jar" />
+            <bundledocument extensions="*"
+                icon="TrueTypeDoc.icns"
+                name="Images"
+                role="editor">
+            </bundledocument>
+            <bundledocument extensions="ttbundle"
+                icon="TrueTypeBundle.icns"
+                name="Custom data"
+                role="editor"
+                isPackage="true">
+            </bundledocument>
         </bundleapp>
+        <copy file="./TrueTypeDoc.icns" tofile="./dist/TrueType.app/Contents/resources/TrueTypeDoc.icns" />
+        <copy file="./TrueTypeBundle.icns" tofile="./dist/TrueType.app/Contents/resources/TrueTypeBundle.icns" />
     </target>
 
     <!--

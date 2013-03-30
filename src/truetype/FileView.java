@@ -15,14 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package truetype.typeX;
+package truetype;
 
 import awtX.XFileChooser;
 import com.XCodeMT.chromeTabs.ITab;
+import com.XCodeMT.chromeTabs.jhrome.JhromeTabBorderAttributes;
+import java.awt.Color;
+import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.undo.UndoManager;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -33,17 +42,40 @@ public class FileView extends javax.swing.JPanel {
     private ITab tab;
     private File file;
     private XFileChooser fileChooser;
+    protected UndoManager undo = new UndoManager();
+    TTabbedPaneWindow window;
 
     /**
      * Creates new form FileView
      */
-    public FileView(ITab tab) {
+    public FileView(ITab tab, TTabbedPaneWindow window) {
         initComponents();
+        textArea.setOpaque(false);
+        textAreaScroller.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0), 2));
+        textArea.setBackground(JhromeTabBorderAttributes.SELECTED_BORDER.topColor);
         this.tab = tab;
         this.tab.setContent(this);
         fileChooser = new XFileChooser();
         file = null;
+        textArea.getDocument().addUndoableEditListener(new MyUndoableEditListener());
+        this.window = window;
     }
+    
+    public UndoManager getUndo() {
+        return undo;
+    }
+    
+    protected class MyUndoableEditListener implements UndoableEditListener {
+        
+        @Override
+        public void undoableEditHappened(UndoableEditEvent e) {
+            //Remember the edit and update the menus
+            undo.addEdit(e.getEdit());
+            window.getUndoAction().update();
+            window.getRedoAction().update();
+        }
+        
+    }  
     
     public void open() {
         if (fileChooser.showOpenDialog()) {
@@ -72,7 +104,7 @@ public class FileView extends javax.swing.JPanel {
         }
     }
     
-    private void update() {
+    public void update() {
         if (file != null) {
             try {
                 textArea.setText(FileUtils.readFileToString(file));
@@ -81,14 +113,6 @@ public class FileView extends javax.swing.JPanel {
             }
         }
         tab.setTitle(file.getName());
-    }
-    
-    public void undo() {
-        
-    }
-    
-    public void redo() {
-        
     }
     
     public JTextArea getTextArea() {
@@ -106,6 +130,14 @@ public class FileView extends javax.swing.JPanel {
     public void setTextAreaScroller(JScrollPane textAreaScroller) {
         this.textAreaScroller = textAreaScroller;
     }
+    
+    public void setFile(File file) {
+        this.file = file;
+    }
+    
+    public File getFile() {
+        return file;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -119,6 +151,7 @@ public class FileView extends javax.swing.JPanel {
         textAreaScroller = new javax.swing.JScrollPane();
         textArea = new javax.swing.JTextArea();
 
+        textArea.setBackground(new java.awt.Color(255, 255, 0));
         textArea.setColumns(20);
         textArea.setFont(new java.awt.Font("Monaco", 0, 13)); // NOI18N
         textArea.setRows(5);

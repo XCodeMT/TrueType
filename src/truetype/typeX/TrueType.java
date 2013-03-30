@@ -1,4 +1,6 @@
 /*
+ * This file is part of TrueType.
+ * 
  * Copyright (C) 2013 Silas Schwarz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,32 +19,10 @@
 
 package truetype.typeX;
 
-import com.XCodeMT.chromeTabs.ITab;
-import com.XCodeMT.chromeTabs.ITabbedPaneWindow;
-import com.XCodeMT.chromeTabs.ITabbedPaneWindowFactory;
-import javax.swing.SwingUtilities;
-
 /**
  *
  * @author XCodeMT
  */
-public class TrueType implements Runnable {
-    public static void main(String[] args) {
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
-        SwingUtilities.invokeLater(new TrueType());
-    }
-
-    @Override
-    public void run() {
-        ITabbedPaneWindowFactory windowFactory = new TTabbedPaneWindowFactory();
-        ITabbedPaneWindow window = windowFactory.createWindow();
-        ITab tab = window.getTabbedPane().getTabFactory().createTab("New...");
-        new FileView(tab);
-        window.getTabbedPane().addTab(tab);
-        window.getTabbedPane().setSelectedTab(tab);
-        window.getWindow().setSize(500, 500);
-        window.getWindow().setVisible(true);
-    }
-
+public class TrueType {
+    
 }
-

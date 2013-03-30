@@ -1,4 +1,2 @@
-TrueType
-========
-
-A simple text editor and implementation of JChrome.
+#TrueType
+![TrueType icon](http://pic.xcodemt.tk/truetype.icns)

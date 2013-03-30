@@ -1,6 +1,4 @@
 /*
- * This file is part of TrueType.
- * 
  * Copyright (C) 2013 Silas Schwarz
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,12 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package truetype.typeX;
+package truetype;
+
+import com.XCodeMT.chromeTabs.event.ITabbedPaneListener;
+import com.XCodeMT.chromeTabs.event.TabAddedEvent;
+import com.XCodeMT.chromeTabs.event.TabSelectedEvent;
+import com.XCodeMT.chromeTabs.event.TabbedPaneEvent;
 
 /**
  *
  * @author XCodeMT
  */
-public class TTabbedPaneWindowFactory {
+public class TTabbedPaneListener implements ITabbedPaneListener {
+    TTabbedPaneWindow window;
+    
+    public TTabbedPaneListener(TTabbedPaneWindow window) {
+        this.window = window;
+        window.getTabbedPane().addTabbedPaneListener(this);
+    }
+
+    @Override
+    public void onEvent(TabbedPaneEvent event) {
+        if (event instanceof TabSelectedEvent) {
+            window.refreshUndo();
+            System.out.println("Undo Updated.");
+        }
+    }
 
 }
