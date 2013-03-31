@@ -14,19 +14,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package truetype;
+package truetype.typeX;
 
-import com.XCodeMT.chromeTabs.ITab;
-import com.XCodeMT.chromeTabs.ITabbedPaneWindow;
-import com.XCodeMT.chromeTabs.TabbedPane;
-import com.XCodeMT.chromeTabs.tabsX.XTab;
-import com.XCodeMT.chromeTabs.tabsX.XTabbedPaneWindow;
+import com.xcodemt.tabs.ITab;
+import com.xcodemt.tabs.TabbedPane;
+import com.xcodemt.tabs.XTab;
+import com.xcodemt.tabs.XTabbedPaneWindow;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -94,15 +91,19 @@ public class TTabbedPaneWindow extends XTabbedPaneWindow {
         open.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ITab tab = new XTab("New...");
-                FileView content = new FileView(tab, TTabbedPaneWindow.this);
-                content.open();
+                if (((TFileView)getTabbedPane().getSelectedTab().getContent()).isNew()) {
+                    ((TFileView)getTabbedPane().getSelectedTab().getContent()).open();
+                } else {
+                    ITab tab = getTabbedPane().getTabFactory().createTab();
+                    getTabbedPane().addTab(tab);
+                    getTabbedPane().setSelectedTab(tab);
+                }
             }
         });
         save.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ((FileView) pane.getSelectedTab().getContent()).save();
+                ((TFileView) pane.getSelectedTab().getContent()).save();
             }
         });
         newTab.addActionListener(new ActionListener() {
@@ -111,8 +112,7 @@ public class TTabbedPaneWindow extends XTabbedPaneWindow {
                 if (pane.getTabFactory() == null) {
                     return;
                 }
-                ITab newTab = pane.getTabFactory().createTab("New...");
-                newTab.setContent(new FileView(newTab, TTabbedPaneWindow.this));
+                ITab newTab = pane.getTabFactory().createTab();
                 pane.addTab(pane.getTabCount(), newTab);
                 pane.setSelectedTab(newTab);
             }
@@ -121,8 +121,7 @@ public class TTabbedPaneWindow extends XTabbedPaneWindow {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TTabbedPaneWindow window = (TTabbedPaneWindow) windowFactory.createWindow();
-                ITab tab = window.getTabbedPane().getTabFactory().createTab("New...");
-                new FileView(tab, window);
+                ITab tab = window.getTabbedPane().getTabFactory().createTab();
                 window.getTabbedPane().addTab(tab);
                 window.getTabbedPane().setSelectedTab(tab);
                 window.getWindow().setSize(500, 500);
@@ -153,7 +152,7 @@ public class TTabbedPaneWindow extends XTabbedPaneWindow {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                ((FileView)getTabbedPane().getSelectedTab().getContent()).getUndo().undo();
+                ((TFileView)getTabbedPane().getSelectedTab().getContent()).getUndo().undo();
             } catch (CannotUndoException ex) {
                 System.out.println("Unable to undo: " + ex);
                 ex.printStackTrace();
@@ -163,7 +162,7 @@ public class TTabbedPaneWindow extends XTabbedPaneWindow {
         }
 
         protected void update() {
-            if (((FileView)getTabbedPane().getSelectedTab().getContent()).getUndo().canUndo()) {
+            if (((TFileView)getTabbedPane().getSelectedTab().getContent()).getUndo().canUndo()) {
                 setEnabled(true);
                 //putValue(Action.NAME, ((FileView)getTabbedPane().getSelectedTab().getContent()).getUndo().getUndoPresentationName());
             } else {
@@ -184,7 +183,7 @@ public class TTabbedPaneWindow extends XTabbedPaneWindow {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                ((FileView)getTabbedPane().getSelectedTab().getContent()).getUndo().redo();
+                ((TFileView)getTabbedPane().getSelectedTab().getContent()).getUndo().redo();
             } catch (CannotRedoException ex) {
                 System.out.println("Unable to redo: " + ex);
                 ex.printStackTrace();
@@ -194,7 +193,7 @@ public class TTabbedPaneWindow extends XTabbedPaneWindow {
         }
 
         protected void update() {
-            if (((FileView)getTabbedPane().getSelectedTab().getContent()).getUndo().canRedo()) {
+            if (((TFileView)getTabbedPane().getSelectedTab().getContent()).getUndo().canRedo()) {
                 setEnabled(true);
                 //putValue(Action.NAME, ((FileView)getTabbedPane().getSelectedTab().getContent()).getUndo().getRedoPresentationName());
             } else {

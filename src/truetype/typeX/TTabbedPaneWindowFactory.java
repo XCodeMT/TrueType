@@ -19,10 +19,61 @@
 
 package truetype.typeX;
 
+import com.xcodemt.tabs.ITabbedPaneWindow;
+import com.xcodemt.tabs.ITabbedPaneWindowFactory;
+import com.xcodemt.tabs.XTabbedPaneWindow;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import swingX.AquaFrame;
+
 /**
  *
  * @author XCodeMT
  */
-public class TTabbedPaneWindowFactory {
+public class TTabbedPaneWindowFactory implements ITabbedPaneWindowFactory {
+    WindowCloseListener listener = new WindowCloseListener();
+    ActiveWindowListener activeListener = new ActiveWindowListener();
+    TrueType app;
+    
+    public TTabbedPaneWindowFactory(TrueType app) {
+        this.app = app;
+    }
 
+    @Override
+    public ITabbedPaneWindow createWindow() {
+        TTabbedPaneWindow frame = new TTabbedPaneWindow(this);
+        AquaFrame.toAqua(frame);
+        frame.getTabbedPane().setWindowFactory(this);
+        frame.setDefaultCloseOperation(XTabbedPaneWindow.EXIT_ON_CLOSE);
+        frame.getTabbedPane().setTabFactory(new TTabFactory(frame));
+        frame.addWindowListener(listener);
+        frame.addWindowListener(activeListener);
+        listener.add();
+        return frame;
+    }
+
+    class WindowCloseListener extends WindowAdapter {
+        private int windowCount;
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            windowCount--;
+            if (windowCount == 0) {
+                System.exit(0);
+            }
+        }
+
+        private void add() {
+            windowCount++;
+        }
+        
+    }
+    
+    class ActiveWindowListener extends WindowAdapter {
+        @Override
+        public void windowActivated(WindowEvent e) {
+            app.setActiveWindow(e.getWindow());
+        }
+    }
+    
 }
